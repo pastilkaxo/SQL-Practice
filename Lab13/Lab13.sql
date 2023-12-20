@@ -4,12 +4,14 @@ use UNIVER
 go 
 create procedure PSSUBJECT as
 begin
+declare @n int = (select count(*) from SUBJECT)
 select SUBJECT.SUBJECT [код] , SUBJECT.SUBJECT_NAME [дисциплина], SUBJECT.PULPIT [кафедра] 
 from SUBJECT
+return @n
 end;
 go
-declare @c int = (select count(*) from SUBJECT);
-exec PSSUBJECT;
+declare @c int;
+exec  @c = PSSUBJECT;
 print 'кол-во строк рез. набора: ' + cast(@c as varchar(5));
 
 -- drop procedure PSSUBJECT
@@ -134,6 +136,7 @@ declare @cn int;
 exec @cn = PAUDITORIUM_INSERT @a = '227-1' , @n = '227-1', @c = 10,@t = 'ЛК'
 print 'err num: ' + cast(@cn as varchar(10));
 
+select * from AUDITORIUM
 drop procedure PAUDITORIUM_INSERT
 go
 
@@ -244,12 +247,14 @@ begin catch
 print 'имя процедуры : ' + error_procedure();
  return -1;
 end catch
-
+go
 delete AUDITORIUM where AUDITORIUM = '229-1'
 delete AUDITORIUM_TYPE where AUDITORIUM_TYPE.AUDITORIUM_TYPE = 'ЛКК'
 declare @rc int ;
 exec @rc = PAUDITORIUM_INSERTX @a = '229-1' , @n = '229-1', @c = 10,@t = 'ЛКК',@tn = 'Лекционная'
 print 'err num: ' + cast(@rc as varchar(10));
+
+select * from AUDITORIUM
 
 go
 drop procedure PAUDITORIUM_INSERT
@@ -289,7 +294,7 @@ begin
         begin
 	         set @f = (select PULPIT.FACULTY from PULPIT where PULPIT.PULPIT = @p)
             set @n = (select count(PULPIT.PULPIT) from PULPIT where PULPIT.FACULTY = @f);
-			print 'Факультет: ' + (@f,'none');
+			print 'Факультет: ' + isnull(@f,'none');
 			set @selected_p = rtrim(@p) + ', ' + @selected_p
 			print 'Кафедры: ' + isnull(@selected_p,'none');
             print 'Количество кафедр(3): ' + cast(@n as varchar(10));
@@ -310,7 +315,7 @@ begin
 end
 go
 
-exec PRINT_REPORT @f=null, @p =  'ЛЗиДВ';
+exec PRINT_REPORT @f='ИТ', @p =  null;
 
 select * from PULPIT where PULPIT.FACULTY = 'ИЭФ'
 
