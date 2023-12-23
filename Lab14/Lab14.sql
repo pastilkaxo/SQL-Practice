@@ -28,9 +28,25 @@ where GROUPS.FACULTY = @f and PULPIT.PULPIT = @p);
 return @rc
 end;
 go
-declare @s int = dbo.COUNT_STUDENT('ИТ','ИСиТ');
+declare @s int = dbo.COUNT_STUDENT('ИТ',null);
 print 'Колличество студентов на фк-те:' + cast(@s as varchar(10));
+go
+drop function dbo.COUNT_STUDENT
 
+-- Для моей БД:
+go
+use Лемешевский_Склад_2
+go
+create function COUNT_ITEMS(@c int) returns int
+as begin
+declare @rc int = 0;
+set @rc = (select count(ITEMS.Item_Name) from ITEMS where ITEMS.Cost < @c);
+return @rc
+end;
+go
+declare @ic int = dbo.COUNT_ITEMS(55);
+print 'Колличество продуктов:' + cast(@ic as varchar(6));
+go
 
 -- 2:
 
@@ -56,6 +72,23 @@ select PULPIT , dbo.FSUBJECTS(PULPIT.PULPIT) from PULPIT
 
 drop function dbo.FSUBJECTS
 
+-- Для моей БД:
+go
+use Лемешевский_Склад_2
+go
+create function COUNT_ITEMS(@c int) returns int
+as begin
+declare @rc int = 0;
+set @rc = (select count(ITEMS.Item_Name) from ITEMS where ITEMS.Cost < @c);
+return @rc
+end;
+go
+declare @ic int = dbo.COUNT_ITEMS(55);
+print 'Колличество продуктов:' + cast(@ic as varchar(6));
+go
+
+
+
 -- 3:
 go
 use UNIVER
@@ -75,6 +108,24 @@ select * from dbo.FFACPUL('ИТ','ИСиТ')
 
 drop function dbo.FFACPUL
 
+
+-- Для моей БД:
+go
+use Лемешевский_Склад_2
+go
+create function COUNT_ITEMS(@c int) returns int
+as begin
+declare @rc int = 0;
+set @rc = (select count(ITEMS.Item_Name) from ITEMS where ITEMS.Cost < @c);
+return @rc
+end;
+go
+declare @ic int = dbo.COUNT_ITEMS(55);
+print 'Колличество продуктов:' + cast(@ic as varchar(6));
+go
+
+
+
 -- 4:
 use UNIVER
 go
@@ -87,6 +138,7 @@ go
 select PULPIT , dbo.FCTEACHER(PULPIT.PULPIT) [Кол-во преподов] from PULPIT
 select dbo.FCTEACHER(null) 
 drop function dbo.FCTEACHER
+
 
 
 -- 6:
@@ -189,7 +241,7 @@ where FACULTY.FACULTY = ISNULL(@fk,FACULTY.FACULTY)
 and
 PULPIT.PULPIT = isnull(@pk,PULPIT.PULPIT)
 go
-create function FCTEACHER(@pk varchar(20)) returns int 
+create function FCTEACHER(@pk varchar(20)) returns int              -- 3я функция FCTEACHER
 as begin
 declare @rc int = (select count(TEACHER.TEACHER) from TEACHER where TEACHER.PULPIT = isnull(@pk,TEACHER.PULPIT)) ;
 return @rc
@@ -246,7 +298,7 @@ end
 end
 go
 
-exec PRINT_REPORTX @f='ИТ', @p ='ИСиТ';
+exec PRINT_REPORTX @f=null, @p ='ИСиТ';
 
 select * from PULPIT where PULPIT.FACULTY = 'ИЭФ'
 
