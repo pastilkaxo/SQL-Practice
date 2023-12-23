@@ -11,7 +11,7 @@ select SALESREPS.REP_OFFICE from SALESREPS where SALESREPS.NAME like @N and SALE
 )
 end;
 go
-exec TASK_ONE @N = '%Smith'
+exec TASK_ONE @N = '%Jones'
 drop procedure TASK_ONE
 
 -- 2:
@@ -30,5 +30,5 @@ fetch New into @cn
 return @cn
 end;
 go
-select dbo.TASK_TWO('Mary Jones') [Фамилия начальника]
+select dbo.TASK_TWO('Bob Smith') [Фамилия начальника]
 drop function TASK_TWO
